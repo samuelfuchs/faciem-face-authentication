@@ -1,4 +1,4 @@
-export const handleError = (errCode) => {
+function handleError(errCode) {
     switch (errCode) {
         case fioErrCode.PERMISSION_REFUSED:
             return ("Access to the Camera stream was denied by the end user");
@@ -60,3 +60,5 @@ export const handleError = (errCode) => {
             break;
     }
 }
+
+export default handleError

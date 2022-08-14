@@ -1,46 +1,51 @@
 import "./App.css";
 import { useEffect } from "react";
 import { useState } from "react";
-import { handleError } from "./assets/handleError";
-function App() {
-  const [userData, setUserData] = useState(null)
-  const [createUser, setCreateUser] = useState(false)
-  const [name, setName] = useState("")
-  const [errorCode, setErrorCode] = useState(null)
+import handleError from './assets/handleError'
 
-  let faceio
+
+function App() {
+  let faceio;
+  const [errorMessage, setErrorMessage] = useState()
+  const [userData, setUserData] = useState(null)
+
+  
+
   useEffect(() => {
-    faceio = new faceIO("fioa32c5")
-  }, [])
+    faceio = new faceIO("fioa32c5");
+  }, []);
 
   const handleSignIn = async () => {
     try {
       let response = await faceio.enroll({
-        locale: "auto", payload: { name: name },
+        locale: "auto",
+        payload: {
+          email: "example@gmail.com",
+          pin: "12345",
+        },
       });
-      console.log("response:", response);
+      console.log(response);
     } catch (error) {
-      setErrorCode(handleError(error))
+      console.log(error);
+      setErrorMessage(handleError(error))
     }
-  }
+  };
 
   const handleLogIn = async () => {
-    console.log("logging in...");
     try {
       let response = await faceio.authenticate({
         locale: "auto",
       });
-      console.log("response:", response);
       setUserData({ facialId: response.facialId, pin: response.payload.pin, name: response.payload.name })
-    } catch (error) {
-      setErrorCode(handleError(error))
-    }
-  }
 
-  const handleCreateNewUser = () => {
-    setCreateUser(true)
-    setUserData(null)
-  }
+      console.log(` Unique Facial ID: ${response.facialId}
+          PayLoad: ${response.payload}
+          `);
+    } catch (error) {
+      console.log(error);
+      setErrorMessage(handleError(error))
+    }
+  };
 
   return (
     <section>
@@ -51,29 +56,20 @@ function App() {
         <hr/>
         <h2 style={{ marginTop: "0" }}>Face Authentication</h2>
       </div>
-      
-      <div style={{ marginTop: "30px" }}>
-        {createUser && (
-          <>
-            <h2>Create new user</h2>
-            Name: <input type="text" defaultValue={name} onChange={(e) => setName(e.target.value)} />
-          </>
-        )}
-        {userData && (
+      {userData && (
           <>
             <h2 style={{ color: "green" }}>You are logged in!</h2>
-            Name: {userData?.name}
-            <br/>
-            ID: {userData?.facialId}
+            Your face ID: {userData?.facialId}
             <br/>
           </>
         )}
-      </div>
-      {errorCode && (<h2 style={{ color: "red" }}>{errorCode}</h2>)}
-      <div style={{ marginTop: "15px" }}>
-        {createUser ? <button disabled={name===""} onClick={handleSignIn}>Sign-up</button> : <button onClick={handleCreateNewUser}>New user</button>}
-        <button style={{ marginLeft: "10px" }} onClick={handleLogIn}>Log-in</button>
-      </div>
+      {errorMessage && (
+        <h2 style={{ color: "red" }}>Error: {errorMessage}</h2>
+      )}
+      {userData ? <a href="/">Log-out</a> : (<div>
+        <button onClick={handleSignIn}>Sign-up</button>
+        <button onClick={handleLogIn}>Log-in</button>
+      </div>)}
     </section>
   );
 }
