@@ -9,6 +9,10 @@ function App() {
   const [errorMessage, setErrorMessage] = useState()
   const [userData, setUserData] = useState(null)
 
+  const [creatingUser, setCreatingUser] = useState(false)
+
+  const [loader, setLoader] = useState(false)
+
   
 
   useEffect(() => {
@@ -16,6 +20,7 @@ function App() {
   }, []);
 
   const handleSignIn = async () => {
+    setLoader(true)
     try {
       let response = await faceio.enroll({
         locale: "auto",
@@ -28,15 +33,18 @@ function App() {
     } catch (error) {
       console.log(error);
       setErrorMessage(handleError(error))
+    } finally {
+      setLoader(false)
     }
   };
 
   const handleLogIn = async () => {
+    setLoader(true)
     try {
       let response = await faceio.authenticate({
         locale: "auto",
       });
-      setUserData({ facialId: response.facialId, pin: response.payload.pin, name: response.payload.name })
+      setUserData({ facialId: response.facialId, pin: response.payload.pin })
 
       console.log(` Unique Facial ID: ${response.facialId}
           PayLoad: ${response.payload}
@@ -44,6 +52,8 @@ function App() {
     } catch (error) {
       console.log(error);
       setErrorMessage(handleError(error))
+    } finally {
+      setLoader(false)
     }
   };
 
@@ -63,13 +73,29 @@ function App() {
             <br/>
           </>
         )}
-      {errorMessage && (
+      {(errorMessage) && (
         <h2 style={{ color: "red" }}>Error: {errorMessage}</h2>
-      )}
-      {userData ? <a href="/">Log-out</a> : (<div>
-        <button onClick={handleSignIn}>Sign-up</button>
-        <button onClick={handleLogIn}>Log-in</button>
-      </div>)}
+        )}
+      {loader 
+        ? <div className="loader-box">
+            <div className="loader-container">
+              <span className="loader-circle"></span>
+              <span className="loader-circle"></span>
+              <span className="loader-circle"></span>
+              <span className="loader-circle"></span>
+            </div>
+          </div> 
+        : (userData 
+        ? <div>
+            <a href="/">Log-out</a>
+          </div>
+        : (creatingUser
+          ? <div><a href="/">Home</a></div>
+          : <div>
+            <button onClick={handleSignIn}>Sign-up</button>
+            <button onClick={handleLogIn}>Log-in</button>
+          </div>))}
+      
     </section>
   );
 }
