@@ -21,6 +21,7 @@ function App() {
 
   const handleSignIn = async () => {
     setLoader(true)
+    setCreatingUser(true)
     try {
       let response = await faceio.enroll({
         locale: "auto",
@@ -29,7 +30,7 @@ function App() {
           pin: "12345",
         },
       });
-      console.log(response);
+      // console.log(response);
     } catch (error) {
       console.log(error);
       setErrorMessage(handleError(error))
@@ -46,9 +47,9 @@ function App() {
       });
       setUserData({ facialId: response.facialId, pin: response.payload.pin })
 
-      console.log(` Unique Facial ID: ${response.facialId}
-          PayLoad: ${response.payload}
-          `);
+      // console.log(` Unique Facial ID: ${response.facialId}
+      //     PayLoad: ${response.payload}
+      //     `);
     } catch (error) {
       console.log(error);
       setErrorMessage(handleError(error))
