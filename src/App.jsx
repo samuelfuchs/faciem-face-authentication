@@ -60,8 +60,8 @@ function App() {
   return (
     <section>
       <div>
-        <h1 style={{ lineHeight: "0" }}>
-          The <span style={{ color: "#646cff" }}>faciem</span> Project
+        <h1 style={{ color: "#646cff", lineHeight: "0px" }}>
+          faciem
         </h1>
         <hr/>
         <h2 style={{ marginTop: "0" }}>Face Authentication</h2>
