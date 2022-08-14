@@ -71,3 +71,9 @@
 .read-the-docs {
   color: #888;
 }
+
+@media (prefers-color-scheme: light) {
+  .loader-circle {
+    background-color: #646cff;
+  }
+}
